@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold {
                         NavHost(
                             navController = navController,
-                            startDestination = "login",
+                            startDestination = "home",
                             modifier = Modifier.padding(it)
                         ) {
                             composable("login") {

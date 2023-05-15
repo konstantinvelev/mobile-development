@@ -9,12 +9,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +33,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mobile_development.R
+import com.example.mobile_development.ui.theme.BorderOnFocus
+import com.example.mobile_development.ui.theme.MainBorder
+import com.example.mobile_development.ui.theme.MainDark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,6 +88,7 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
             text = "Log in",
             modifier = modifier,
             fontSize = 30.sp,
+            color = MainDark,
             fontWeight = FontWeight.Bold,
         )
 
@@ -92,7 +98,8 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
                 .fillMaxWidth(),
             value = email,
             onValueChange = { newValue -> setEmail(newValue) },
-            placeholder = { Text("Email") },
+            label = { Text(text = "Email") },
+            placeholder = { Text(text = "Type your email") },
             isError = !validateEmail(),
             supportingText = {
                 if (!validateEmail()) {
@@ -104,6 +111,13 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
                     )
                 }
             },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedLabelColor = MainBorder,
+                unfocusedBorderColor = MainBorder,
+                focusedBorderColor = BorderOnFocus,
+                focusedLabelColor = BorderOnFocus,
+                errorLabelColor = Color.Red
+            ),
         )
 
         OutlinedTextField(
@@ -112,7 +126,8 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
                 .fillMaxWidth(),
             value = password,
             onValueChange = { newValue -> setPassword(newValue) },
-            placeholder = { Text("Password") },
+            label = { Text(text = "Password")},
+            placeholder = { Text(text = "Type your password") },
             visualTransformation = if (showPass) VisualTransformation.None else PasswordVisualTransformation(),
             isError = !validatePassword(),
             supportingText = {
@@ -127,9 +142,9 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
             },
             trailingIcon = {
                 val (icon, iconColor) = if (showPass) {
-                    Pair(Icons.Filled.Visibility, Color(Color.Gray.value))
+                    Pair(Icons.Filled.Visibility, MainBorder)
                 } else {
-                    Pair(Icons.Filled.VisibilityOff, Color(Color.Gray.value))
+                    Pair(Icons.Filled.VisibilityOff, MainBorder)
                 }
 
                 IconButton(onClick = { setShowPass(!showPass) }) {
@@ -139,7 +154,14 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
                         tint = iconColor
                     )
                 }
-            }
+            },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedLabelColor = MainBorder,
+                unfocusedBorderColor = MainBorder,
+                focusedBorderColor = BorderOnFocus,
+                focusedLabelColor = BorderOnFocus,
+                errorLabelColor = Color.Red
+            ),
         )
 
         Column(
@@ -150,7 +172,8 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
                     .size(width = 400.dp, height = 35.dp)
                     .padding(horizontal = 20.dp),
                 enabled = isError,
-                onClick = navigateToHomeScreen
+                onClick = navigateToHomeScreen,
+                colors = ButtonDefaults.buttonColors(MainDark)
             ) {
                 Text(text = "Login")
             }
