@@ -20,6 +20,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,18 +33,35 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.etherealartefacts.LoginViewModel
+import com.example.etherealartefacts.networking.TokenProvider
 import com.example.mobile_development.R
+import com.example.mobile_development.model.Login
 import com.example.mobile_development.ui.theme.BorderOnFocus
 import com.example.mobile_development.ui.theme.MainBorder
 import com.example.mobile_development.ui.theme.MainDark
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modifier) {
+fun LoginScreen(
+    tokenProvider: TokenProvider,
+    navigateToHomeScreen: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     var (email, setEmail) = remember { mutableStateOf("") }
     var (password, setPassword) = remember { mutableStateOf("") }
     var (showPass, setShowPass) = remember { mutableStateOf(false) }
     var (isError, setIsError) = remember { mutableStateOf(false) }
+    var coroutineScope = rememberCoroutineScope()
+    val loginViewModel: LoginViewModel = hiltViewModel()
+
+    val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        throwable.printStackTrace()
+    }
 
     fun validateEmail(): Boolean {
         if (!TextUtils.isEmpty(email)) {
@@ -71,7 +89,7 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
         contentScale = ContentScale.FillBounds
     )
     Column(
-        modifier = modifier
+        modifier = Modifier
             .padding(horizontal = 15.dp, vertical = 35.dp)
             .fillMaxSize()
     ) {
@@ -86,14 +104,14 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
 
         Text(
             text = "Log in",
-            modifier = modifier,
+            modifier = Modifier,
             fontSize = 30.sp,
             color = MainDark,
             fontWeight = FontWeight.Bold,
         )
 
         OutlinedTextField(
-            modifier = modifier
+            modifier = Modifier
                 .padding(start = 0.dp, end = 0.dp, top = 20.dp, bottom = 15.dp)
                 .fillMaxWidth(),
             value = email,
@@ -121,12 +139,12 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
         )
 
         OutlinedTextField(
-            modifier = modifier
+            modifier = Modifier
                 .padding(start = 0.dp, end = 0.dp, top = 5.dp, bottom = 40.dp)
                 .fillMaxWidth(),
             value = password,
             onValueChange = { newValue -> setPassword(newValue) },
-            label = { Text(text = "Password")},
+            label = { Text(text = "Password") },
             placeholder = { Text(text = "Type your password") },
             visualTransformation = if (showPass) VisualTransformation.None else PasswordVisualTransformation(),
             isError = !validatePassword(),
@@ -168,11 +186,18 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit = {}, modifier: Modifier = Modi
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                modifier = modifier
+                modifier = Modifier
                     .size(width = 400.dp, height = 35.dp)
                     .padding(horizontal = 20.dp),
                 enabled = isError,
-                onClick = navigateToHomeScreen,
+                onClick = {
+                    coroutineScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+
+                        val body = Login(email, password)
+                        loginViewModel.login(body)
+                        navigateToHomeScreen()
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(MainDark)
             ) {
                 Text(text = "Login")
