@@ -1,8 +1,12 @@
 package com.example.mobile_development.ui.productDetails
 
 import androidx.lifecycle.ViewModel
+import com.example.mobile_development.api.API
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ProductDetailsViewModel : ViewModel() {
+@HiltViewModel
+class ProductDetailsViewModel @Inject constructor(private val apiService: API) : ViewModel() {
     val id = 0
     val title: String = ""
     val description = ""

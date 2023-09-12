@@ -1,12 +1,12 @@
 @file:Suppress("UnusedImport")
 
-package com.example.etherealartefacts.di
+package com.example.mobile_development.di
 
-import JWTInterceptor
-import com.example.mobile_development.api.TokenProvider
+import com.example.etherealartefacts.DefaultRepository
 import com.example.mobile_development.api.API
 import com.example.mobile_development.api.APIClient
-import com.google.firebase.database.core.TokenProvider
+import com.example.mobile_development.api.JWTInterceptor
+import com.example.mobile_development.api.TokenProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Module()
 @InstallIn(SingletonComponent::class)
-object NetworkingModules {
+object APIModule {
     @Provides
     @Singleton
     fun providesTokenProvider(): TokenProvider {
@@ -33,4 +33,8 @@ object NetworkingModules {
     fun providesAPI(providesJWTInterceptor: JWTInterceptor): API {
         return APIClient(providesJWTInterceptor).defaultService
     }
+    @Provides
+    @Singleton
+    fun providesRepository(apiService: API) = DefaultRepository(apiService)
+
 }

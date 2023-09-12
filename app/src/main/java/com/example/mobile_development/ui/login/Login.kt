@@ -18,6 +18,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,8 +37,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.etherealartefacts.LoginViewModel
-import com.example.etherealartefacts.networking.TokenProvider
-import com.example.mobile_development.R
 import com.example.mobile_development.model.Login
 import com.example.mobile_development.ui.theme.BorderOnFocus
 import com.example.mobile_development.ui.theme.MainBorder
@@ -44,11 +45,13 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.etherealartefacts.R
+import com.example.mobile_development.api.TokenProvider
+import com.example.mobile_development.model.LoginSuccess
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(
-    tokenProvider: TokenProvider,
+fun LoginScreen(jwtTokenProvider: TokenProvider,
     navigateToHomeScreen: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -58,9 +61,23 @@ fun LoginScreen(
     var (isError, setIsError) = remember { mutableStateOf(false) }
     var coroutineScope = rememberCoroutineScope()
     val loginViewModel: LoginViewModel = hiltViewModel()
+    val response by loginViewModel.response.collectAsState()
 
     val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
+    }
+
+    LaunchedEffect(response) {
+        response?.let { result ->
+            result.onSuccess { response: LoginSuccess ->
+                jwtTokenProvider.setJwtToken(response.jwt)
+                navigateToHomeScreen()
+            }
+            result.onFailure {
+                setIsError(true)
+//                showErrorNotification(context, "Invalid Credentials")
+            }
+        }
     }
 
     fun validateEmail(): Boolean {
@@ -187,7 +204,7 @@ fun LoginScreen(
         ) {
             Button(
                 modifier = Modifier
-                    .size(width = 400.dp, height = 35.dp)
+                    .size(width = 400.dp, height = 50.dp)
                     .padding(horizontal = 20.dp),
                 enabled = isError,
                 onClick = {
@@ -195,7 +212,6 @@ fun LoginScreen(
 
                         val body = Login(email, password)
                         loginViewModel.login(body)
-                        navigateToHomeScreen()
                     }
                 },
                 colors = ButtonDefaults.buttonColors(MainDark)

@@ -1,4 +1,4 @@
-package com.example.etherealartefacts.networking
+package com.example.mobile_development.api
 
 class TokenProvider(
     private var jwtToken: String? = null,

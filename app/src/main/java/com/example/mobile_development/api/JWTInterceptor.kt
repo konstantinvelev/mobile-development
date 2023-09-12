@@ -1,4 +1,4 @@
-import com.example.etherealartefacts.networking.TokenProvider
+package com.example.mobile_development.api
 import okhttp3.Interceptor
 import okhttp3.Response
 

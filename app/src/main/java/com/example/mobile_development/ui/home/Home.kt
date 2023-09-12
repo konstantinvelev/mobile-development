@@ -26,8 +26,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mobile_development.R
+import com.example.etherealartefacts.R
 import com.example.mobile_development.api.APIClient
+import com.example.mobile_development.api.JWTInterceptor
+import com.example.mobile_development.api.TokenProvider
 import com.example.mobile_development.ui.productDetails.ProductDetailsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,9 +39,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(navigateToProductDetailsScreen: () -> Unit = {}, modifier: Modifier = Modifier) {
     var product: ProductDetailsViewModel? by remember { mutableStateOf(null) }
-
     var coroutineScope = rememberCoroutineScope()
-    val apiClient = APIClient()
+    val tokenProvider = TokenProvider()
+    val interceptor = JWTInterceptor(tokenProvider)
+    val apiClient = APIClient(interceptor)
 
     Image(
         modifier = Modifier.fillMaxSize(),
@@ -52,32 +55,32 @@ fun HomeScreen(navigateToProductDetailsScreen: () -> Unit = {}, modifier: Modifi
             .padding(horizontal = 15.dp, vertical = 20.dp)
             .fillMaxWidth()
     ) {
-        Row() {
-            Text(
-                text = "Home",
-                modifier = Modifier
-                    .padding(start = 150.dp, end = 70.dp, top = 10.dp, bottom = 20.dp),
-                fontSize = 25.sp,
-                textAlign = TextAlign.Center
-            )
-
-            IconButton(onClick = { }) {
-                Icon(
-                    modifier = Modifier.size(size = 32.dp),
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Account",
-                    tint = Color.DarkGray
-                )
-            }
-            IconButton(onClick = { }) {
-                Icon(
-                    modifier = Modifier.size(size = 33.dp),
-                    imageVector = Icons.Filled.ShoppingCart,
-                    contentDescription = "Shopping Cart",
-                    tint = Color.DarkGray
-                )
-            }
-        }
+       // Row() {
+//            Text(
+//                text = "Home",
+//                modifier = Modifier
+//                    .padding(start = 150.dp, end = 70.dp, top = 10.dp, bottom = 20.dp),
+//                fontSize = 25.sp,
+//                textAlign = TextAlign.Center
+//            )
+//
+//            IconButton(onClick = { }) {
+//                Icon(
+//                    modifier = Modifier.size(size = 32.dp),
+//                    imageVector = Icons.Default.AccountCircle,
+//                    contentDescription = "Account",
+//                    tint = Color.DarkGray
+//                )
+//            }
+//            IconButton(onClick = { }) {
+//                Icon(
+//                    modifier = Modifier.size(size = 33.dp),
+//                    imageVector = Icons.Filled.ShoppingCart,
+//                    contentDescription = "Shopping Cart",
+//                    tint = Color.DarkGray
+//                )
+//            }
+//        }
 
         SearchField()
 

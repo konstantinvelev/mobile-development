@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mobile_development.R
+import com.example.etherealartefacts.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,24 +41,6 @@ fun ProductDetailsScreen(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
     ) {
-        Row() {
-            Text(
-                text = "Item",
-                modifier = Modifier
-                    .padding(start = 150.dp, end = 70.dp, top = 10.dp, bottom = 20.dp),
-                fontSize = 25.sp,
-                textAlign = TextAlign.Center
-            )
-            IconButton(onClick = { }) {
-                Icon(
-                    modifier = Modifier.size(size = 33.dp),
-                    imageVector = Icons.Filled.ShoppingCart,
-                    contentDescription = "Shopping Cart",
-                    tint = Color.DarkGray
-                )
-            }
-        }
-
         Image(
             modifier = Modifier.fillMaxWidth()
                 .size(width =  350.dp, height = 350.dp   ),
